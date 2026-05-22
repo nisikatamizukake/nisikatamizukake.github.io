@@ -1148,6 +1148,56 @@ footer {
 .gold-line::after  { background: linear-gradient(to left, transparent, rgba(200,164,85,0.4)); }
 
 /* ============================================================
+   IMAGES & GALLERY
+   ============================================================ */
+
+/* Hero background image */
+.hero-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  opacity: 0.35;
+}
+
+/* About section image */
+.about-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  opacity: 0.6;
+  z-index: 1;
+}
+
+/* Gallery grid */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 64px;
+}
+
+.gallery-image {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(200,164,85,0.2);
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+
+.gallery-image:hover {
+  transform: scale(1.02);
+  border-color: var(--gold);
+  box-shadow: 0 8px 32px rgba(200,164,85,0.15);
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 900px) {
