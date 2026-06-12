@@ -21,4 +21,10 @@ const NEWS_ITEMS = [
     title: "福島民報に西方水かけ祭りが掲載されました",
     url: "https://www.instagram.com/nisikata_mizukake/",
   },
+  {
+    date: "2025-01-01",
+    category: "祭礼",
+    title: "【開催報告】2025年 西方水かけ祭り 約500名の来場者が見守るなか開催",
+    url: "https://www.instagram.com/nisikata_mizukake/",
+  },
 ];
