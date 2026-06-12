@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://nisikatamizukake.github.io/</loc>
+    <lastmod>2026-06-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://nisikatamizukake.github.io/images/hero_mizukake.jpg</image:loc>
+      <image:title>西方水かけ祭り 泥水をかけ合う勇壮なみそぎ（福島県三春町の奇祭）</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://nisikatamizukake.github.io/images/gallery_doromizu.jpg</image:loc>
+      <image:title>西方水かけ祭り 泥水が飛び散るみそぎの瞬間</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://nisikatamizukake.github.io/images/gallery_ishidan.jpg</image:loc>
+      <image:title>西方水かけ祭り 塩釜神社の石段を駆け上がる参加者</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://nisikatamizukake.github.io/images/about_shiogama.jpg</image:loc>
+      <image:title>西方水かけ祭りの舞台・塩釜神社（福島県三春町西方）</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://nisikatamizukake.github.io/images/banner_kizuna.jpg</image:loc>
+      <image:title>西方水かけ祭り 肩を組んで歩く西方若連会の若者たち</image:title>
+    </image:image>
+  </url>
+</urlset>

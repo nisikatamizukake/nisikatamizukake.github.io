@@ -108,16 +108,6 @@ window.showDonateInfo = function (type) {
   if (!modal || !content) return;
 
   const info = {
-    paypay: `
-      <p style="font-size:0.78rem;letter-spacing:0.2em;color:var(--gold);margin-bottom:12px;">PAYPAY 送金</p>
-      <p style="font-size:0.9rem;color:var(--white);line-height:2;">
-        PayPay IDまたは電話番号宛への<br>送金でご支援いただけます。
-      </p>
-      <p style="margin-top:16px;font-size:0.82rem;color:var(--white-sub);line-height:1.9;">
-        詳細はInstagram DM<br>
-        <strong style="color:var(--gold);">@nisikata_mizukake</strong><br>
-        よりお問い合わせください。
-      </p>`,
     bank: `
       <p style="font-size:0.78rem;letter-spacing:0.2em;color:var(--gold);margin-bottom:12px;">銀行振込</p>
       <p style="font-size:0.9rem;color:var(--white);line-height:2;">
