@@ -10,12 +10,6 @@
 
 const NEWS_ITEMS = [
   {
-    date: "2026-06-11",
-    category: "お知らせ",
-    title: "公式HP稼働",
-    url: "",
-  },
-  {
     date: "2026-01-01",
     category: "祭礼",
     title: "【開催報告】2026年 西方水かけ祭り 無事に執り行われました",
