@@ -200,27 +200,9 @@
         </div>
         <a href="https://www.instagram.com/nisikata_mizukake/" target="_blank" rel="noopener" class="news-more">Instagram で最新情報 &rarr;</a>
       </div>
-      <div class="news-list reveal" role="list">
-        <a href="https://www.instagram.com/nisikata_mizukake/" target="_blank" rel="noopener" class="news-item" role="listitem">
-          <span class="news-date">2026.01.01</span>
-          <span class="news-badge badge-event">祭礼</span>
-          <span class="news-title">【開催報告】2026年 西方水かけ祭り 無事に執り行われました</span>
-        </a>
-        <a href="https://www.instagram.com/nisikata_mizukake/" target="_blank" rel="noopener" class="news-item" role="listitem">
-          <span class="news-date">2025.12.20</span>
-          <span class="news-badge badge-info">お知らせ</span>
-          <span class="news-title">2026年元日開催のご案内・アクセスについて（駐車場なし）</span>
-        </a>
-        <a href="https://www.instagram.com/nisikata_mizukake/" target="_blank" rel="noopener" class="news-item" role="listitem">
-          <span class="news-date">2025.07.15</span>
-          <span class="news-badge badge-media">メディア</span>
-          <span class="news-title">福島民報に西方水かけ祭りが掲載されました</span>
-        </a>
-        <a href="https://www.instagram.com/nisikata_mizukake/" target="_blank" rel="noopener" class="news-item" role="listitem">
-          <span class="news-date">2025.01.01</span>
-          <span class="news-badge badge-event">祭礼</span>
-          <span class="news-title">【開催報告】2025年 西方水かけ祭り 約500名の来場者が見守るなか開催</span>
-        </a>
+      <div class="news-list reveal" role="list" id="newsList"></div>
+      <div class="news-toggle-wrap reveal">
+        <button id="newsToggle" class="news-toggle" type="button" hidden>すべてのお知らせを見る</button>
       </div>
     </div>
   </section>
@@ -755,6 +737,7 @@
     </div>
   </footer>
 
+  <script src="js/news-data.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

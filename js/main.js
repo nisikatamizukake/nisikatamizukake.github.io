@@ -2,6 +2,70 @@
    西方水かけ祭り 公式HP — main.js
    ============================================================ */
 
+/* ---------- お知らせ描画（データは js/news-data.js） ---------- */
+(function () {
+  const list   = document.getElementById('newsList');
+  const toggle = document.getElementById('newsToggle');
+  if (!list || typeof NEWS_ITEMS === 'undefined') return;
+
+  const BADGE_CLASS = { '祭礼': 'badge-event', 'お知らせ': 'badge-info', 'メディア': 'badge-media' };
+  const NEW_DAYS    = 30;  // 投稿日からこの日数は NEW を表示
+  const SHOW_COUNT  = 5;   // 初期表示件数
+
+  const items = [...NEWS_ITEMS].sort((a, b) => b.date.localeCompare(a.date));
+  let expanded = false;
+
+  const render = () => {
+    list.innerHTML = '';
+    const visible = expanded ? items : items.slice(0, SHOW_COUNT);
+    visible.forEach((item) => {
+      const a = document.createElement('a');
+      a.className = 'news-item';
+      a.href = item.url || 'https://www.instagram.com/nisikata_mizukake/';
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.setAttribute('role', 'listitem');
+
+      const date = document.createElement('span');
+      date.className = 'news-date';
+      date.textContent = item.date.replaceAll('-', '.');
+
+      const badge = document.createElement('span');
+      badge.className = 'news-badge ' + (BADGE_CLASS[item.category] || 'badge-info');
+      badge.textContent = item.category || 'お知らせ';
+
+      const title = document.createElement('span');
+      title.className = 'news-title';
+      const ageDays = (Date.now() - new Date(item.date + 'T00:00:00')) / 86400000;
+      if (ageDays >= 0 && ageDays <= NEW_DAYS) {
+        const n = document.createElement('span');
+        n.className = 'news-new';
+        n.textContent = 'NEW';
+        title.appendChild(n);
+      }
+      title.appendChild(document.createTextNode(item.title));
+
+      a.append(date, badge, title);
+      list.appendChild(a);
+    });
+
+    if (toggle) {
+      toggle.hidden = items.length <= SHOW_COUNT;
+      toggle.textContent = expanded
+        ? '表示を減らす'
+        : `すべてのお知らせを見る（全${items.length}件）`;
+    }
+  };
+
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      expanded = !expanded;
+      render();
+    });
+  }
+  render();
+})();
+
 /* ---------- Navbar: スクロールで背景付与 ---------- */
 (function () {
   const navbar = document.getElementById('navbar');
