@@ -65,6 +65,39 @@
       display: none; background: rgba(200,164,85,0.15); border: 1px solid rgba(200,164,85,0.4);
       color: var(--gold-light); font-size: 0.8rem; padding: 8px 12px; border-radius: 6px; margin-bottom: 10px;
     }
+    /* 日付欄＋カレンダー */
+    .date-row { display: flex; gap: 8px; }
+    .date-row input { flex: 1; }
+    .date-btn { width: auto; margin: 0; padding: 12px 16px; font-size: 14px; white-space: nowrap; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
+    .cal {
+      margin-top: 10px; padding: 14px;
+      background: rgba(8,9,13,0.7); border: 1px solid rgba(200,164,85,0.4); border-radius: 10px;
+    }
+    .cal-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px; color: var(--gold-light); font-weight: 700;
+    }
+    .cal-nav {
+      width: auto; margin: 0; padding: 6px 16px; font-size: 14px;
+      background: none; border: 1px solid rgba(200,164,85,0.4); color: var(--gold-light); border-radius: 6px;
+    }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-grid .dow { text-align: center; font-size: 0.7rem; color: var(--sub); padding: 4px 0; }
+    .cal-grid .dow.sun { color: var(--ng); }
+    .cal-grid .dow.sat { color: #6aa6e8; }
+    .cal-day {
+      width: 100%; margin: 0; padding: 10px 0; font-size: 14px; font-weight: 400;
+      background: none; border: 1px solid transparent; color: var(--white); border-radius: 6px;
+    }
+    .cal-day:hover { border-color: var(--gold); }
+    .cal-day.today { border-color: rgba(200,164,85,0.5); color: var(--gold-light); font-weight: 700; }
+    .cal-day.selected { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #1a1a1a; font-weight: 700; }
+    .cal-day.empty { visibility: hidden; }
+    .cal-today {
+      margin-top: 10px; padding: 8px; font-size: 13px;
+      background: none; border: 1px solid rgba(200,164,85,0.4); color: var(--gold-light);
+    }
   </style>
 </head>
 <body>
@@ -76,8 +109,20 @@
     <div class="card">
       <h2 id="formTitle">✏️ お知らせを書く</h2>
       <div class="editing-flag" id="editingFlag">修正中です。内容を直して「この内容で決定」を押してください。</div>
-      <label>日付</label>
-      <input type="date" id="fDate">
+      <label>日付（入力するか、カレンダーから選べます）</label>
+      <div class="date-row">
+        <input type="date" id="fDate">
+        <button type="button" class="btn-line date-btn" onclick="toggleCal()">📅 カレンダー</button>
+      </div>
+      <div id="calPanel" class="cal" hidden>
+        <div class="cal-head">
+          <button type="button" class="cal-nav" onclick="calMove(-1)">◀</button>
+          <span id="calTitle"></span>
+          <button type="button" class="cal-nav" onclick="calMove(1)">▶</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <button type="button" class="cal-today" onclick="calToday()">今日を選ぶ</button>
+      </div>
       <label>種類</label>
       <select id="fCat">
         <option value="お知らせ">お知らせ（青）</option>
@@ -290,6 +335,76 @@ ${lines}
         showMsg('pubMsg', true, '✅ 反映しました！1〜2分後にホームページに表示されます。');
       } catch (e) {
         showMsg('pubMsg', false, '❌ ' + e.message + '　うまくいかない場合は「手動で反映する方法」をお試しください。');
+      }
+    }
+
+    /* ---------- カレンダー ---------- */
+    let calYear, calMonth; // monthは0始まり
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function dateStr(y, m, d) { return `${y}-${pad(m + 1)}-${pad(d)}`; }
+
+    function toggleCal() {
+      const panel = $('calPanel');
+      if (panel.hidden) {
+        const v = $('fDate').value;
+        const base = v ? new Date(v + 'T00:00:00') : new Date();
+        calYear = base.getFullYear();
+        calMonth = base.getMonth();
+        renderCal();
+        panel.hidden = false;
+      } else {
+        panel.hidden = true;
+      }
+    }
+
+    function calMove(diff) {
+      calMonth += diff;
+      if (calMonth < 0)  { calMonth = 11; calYear--; }
+      if (calMonth > 11) { calMonth = 0;  calYear++; }
+      renderCal();
+    }
+
+    function calToday() {
+      const t = new Date();
+      $('fDate').value = dateStr(t.getFullYear(), t.getMonth(), t.getDate());
+      $('calPanel').hidden = true;
+    }
+
+    function pickDay(d) {
+      $('fDate').value = dateStr(calYear, calMonth, d);
+      $('calPanel').hidden = true;
+    }
+
+    function renderCal() {
+      $('calTitle').textContent = `${calYear}年 ${calMonth + 1}月`;
+      const grid = $('calGrid');
+      grid.innerHTML = '';
+      ['日', '月', '火', '水', '木', '金', '土'].forEach((w, i) => {
+        const el = document.createElement('div');
+        el.className = 'dow' + (i === 0 ? ' sun' : i === 6 ? ' sat' : '');
+        el.textContent = w;
+        grid.appendChild(el);
+      });
+      const first = new Date(calYear, calMonth, 1).getDay();
+      const days  = new Date(calYear, calMonth + 1, 0).getDate();
+      const today = new Date();
+      const todayStr = dateStr(today.getFullYear(), today.getMonth(), today.getDate());
+      const selected = $('fDate').value;
+      for (let i = 0; i < first; i++) {
+        const el = document.createElement('button');
+        el.className = 'cal-day empty';
+        el.type = 'button';
+        grid.appendChild(el);
+      }
+      for (let d = 1; d <= days; d++) {
+        const el = document.createElement('button');
+        el.type = 'button';
+        const ds = dateStr(calYear, calMonth, d);
+        el.className = 'cal-day' + (ds === todayStr ? ' today' : '') + (ds === selected ? ' selected' : '');
+        el.textContent = d;
+        el.onclick = () => pickDay(d);
+        grid.appendChild(el);
       }
     }
 
