@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>お知らせ管理 | 西方水かけ祭り</title>
+  <style>
+    :root {
+      --black: #08090d; --navy: #0e1f3d; --gold: #c8a455; --gold-light: #e8c878;
+      --white: #f2ede4; --sub: rgba(242,237,228,0.65); --ok: #4caf7d; --ng: #e06060;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--black); color: var(--white);
+      font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      line-height: 1.8; padding: 24px 16px 80px;
+    }
+    .wrap { max-width: 760px; margin: 0 auto; }
+    h1 { font-size: 1.3rem; color: var(--gold); margin-bottom: 4px; }
+    .lead { font-size: 0.85rem; color: var(--sub); margin-bottom: 28px; }
+    .card {
+      background: var(--navy); border: 1px solid rgba(200,164,85,0.3);
+      border-radius: 10px; padding: 20px; margin-bottom: 20px;
+    }
+    .card h2 { font-size: 1rem; color: var(--gold-light); margin-bottom: 14px; }
+    label { display: block; font-size: 0.8rem; color: var(--sub); margin: 12px 0 4px; }
+    input, select, textarea {
+      width: 100%; padding: 12px; font-size: 16px; border-radius: 8px;
+      border: 1px solid rgba(200,164,85,0.35); background: rgba(8,9,13,0.6); color: var(--white);
+    }
+    input:focus, select:focus { outline: 2px solid var(--gold); }
+    button {
+      font-size: 16px; padding: 14px 20px; border-radius: 8px; border: none;
+      cursor: pointer; font-weight: 700; width: 100%; margin-top: 16px;
+    }
+    .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #1a1a1a; }
+    .btn-line { background: none; border: 1px solid rgba(200,164,85,0.5); color: var(--gold-light); }
+    .btn-danger { background: none; border: 1px solid rgba(224,96,96,0.5); color: var(--ng); }
+    .item {
+      display: flex; gap: 10px; align-items: flex-start;
+      border-bottom: 1px solid rgba(200,164,85,0.15); padding: 14px 0;
+    }
+    .item:last-child { border-bottom: none; }
+    .item-main { flex: 1; min-width: 0; }
+    .item-date { font-size: 0.75rem; color: var(--gold); letter-spacing: 0.05em; }
+    .item-cat {
+      display: inline-block; font-size: 0.68rem; padding: 1px 8px; border-radius: 3px;
+      margin-left: 8px; background: rgba(200,164,85,0.2); color: var(--gold-light);
+    }
+    .item-title { font-size: 0.9rem; margin-top: 2px; word-break: break-all; }
+    .item-btns { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .item-btns button { width: auto; margin: 0; padding: 8px 14px; font-size: 13px; }
+    .note { font-size: 0.78rem; color: var(--sub); margin-top: 10px; }
+    .msg { margin-top: 14px; padding: 12px; border-radius: 8px; font-size: 0.85rem; display: none; }
+    .msg.ok { display: block; background: rgba(76,175,125,0.15); color: var(--ok); border: 1px solid rgba(76,175,125,0.4); }
+    .msg.ng { display: block; background: rgba(224,96,96,0.12); color: var(--ng); border: 1px solid rgba(224,96,96,0.4); }
+    details { margin-top: 14px; font-size: 0.82rem; color: var(--sub); }
+    summary { cursor: pointer; color: var(--gold-light); }
+    details ol { padding-left: 20px; margin-top: 8px; }
+    details li { margin-bottom: 6px; }
+    a { color: var(--gold-light); }
+    .steps { font-size: 0.82rem; color: var(--sub); margin-top: 8px; }
+    .editing-flag {
+      display: none; background: rgba(200,164,85,0.15); border: 1px solid rgba(200,164,85,0.4);
+      color: var(--gold-light); font-size: 0.8rem; padding: 8px 12px; border-radius: 6px; margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>お知らせ管理</h1>
+    <p class="lead">西方水かけ祭り公式HP — お知らせの追加・修正・削除がここでできます。</p>
+
+    <!-- 入力フォーム -->
+    <div class="card">
+      <h2 id="formTitle">✏️ お知らせを書く</h2>
+      <div class="editing-flag" id="editingFlag">修正中です。内容を直して「この内容で決定」を押してください。</div>
+      <label>日付</label>
+      <input type="date" id="fDate">
+      <label>種類</label>
+      <select id="fCat">
+        <option value="お知らせ">お知らせ（青）</option>
+        <option value="祭礼">祭礼（金）</option>
+        <option value="メディア">メディア（赤）</option>
+      </select>
+      <label>見出し（本文）</label>
+      <input type="text" id="fTitle" placeholder="例：2027年元日開催のご案内">
+      <label>リンク先URL（空欄なら公式Instagramが開きます）</label>
+      <input type="url" id="fUrl" placeholder="https://...（空欄OK）">
+      <button class="btn-gold" id="btnAdd" onclick="addOrUpdate()">＋ この内容で決定</button>
+      <button class="btn-line" id="btnCancel" onclick="cancelEdit()" style="display:none;">修正をやめる</button>
+      <div class="msg" id="formMsg"></div>
+    </div>
+
+    <!-- 一覧 -->
+    <div class="card">
+      <h2>📋 いまのお知らせ一覧（新しい順）</h2>
+      <div id="list"></div>
+    </div>
+
+    <!-- 公開 -->
+    <div class="card">
+      <h2>🌐 ホームページに反映する</h2>
+      <p class="steps">上で追加・修正したら、最後にこのボタンを押してください。1〜2分で本番ホームページに反映されます。</p>
+      <button class="btn-gold" onclick="publish()">🚀 ホームページに反映する</button>
+      <div class="msg" id="pubMsg"></div>
+
+      <details>
+        <summary>初回だけ：かんたん設定（保存キーの登録）</summary>
+        <ol>
+          <li><a href="https://github.com/settings/tokens/new?scopes=repo&description=mizukake-news" target="_blank" rel="noopener">ここをクリック</a>（GitHubのキー発行ページが開きます。ログインを求められたらログイン）</li>
+          <li>一番下の緑のボタン「Generate token」を押す</li>
+          <li>表示された <strong>ghp_ で始まる文字列</strong> をコピーして、下の欄に貼り付けて「保存」</li>
+        </ol>
+        <label>保存キー（この端末に記憶されます）</label>
+        <input type="password" id="fToken" placeholder="ghp_xxxxxxxx">
+        <button class="btn-line" onclick="saveToken()">保存キーを記憶する</button>
+        <p class="note">⚠ キーは他人に教えないでください。この端末のブラウザにだけ保存されます。</p>
+      </details>
+
+      <details>
+        <summary>うまくいかない時：手動で反映する方法</summary>
+        <ol>
+          <li>下の「① 内容をコピー」を押す</li>
+          <li>「② GitHubの編集ページを開く」を押す</li>
+          <li>開いたページの文章を全部消して、貼り付け（Cmd+A → Cmd+V）</li>
+          <li>右上の緑「Commit changes...」→ もう一度緑のボタンを押す</li>
+        </ol>
+        <button class="btn-line" onclick="copyData()">① 内容をコピー</button>
+        <button class="btn-line" onclick="window.open('https://github.com/nisikatamizukake/nisikatamizukake.github.io/edit/main/js/news-data.js', '_blank')">② GitHubの編集ページを開く</button>
+      </details>
+    </div>
+
+    <p class="note">公式サイト: <a href="index.html">トップページへ戻る</a></p>
+  </div>
+
+  <script src="js/news-data.js"></script>
+  <script>
+    const REPO = 'nisikatamizukake/nisikatamizukake.github.io';
+    const PATH = 'js/news-data.js';
+    let items = (typeof NEWS_ITEMS !== 'undefined' ? [...NEWS_ITEMS] : [])
+      .sort((a, b) => b.date.localeCompare(a.date));
+    let editIndex = -1;
+
+    const $ = (id) => document.getElementById(id);
+    const CAT_OK = ['祭礼', 'お知らせ', 'メディア'];
+
+    function renderList() {
+      const list = $('list');
+      list.innerHTML = '';
+      if (!items.length) {
+        list.innerHTML = '<p class="note">お知らせはまだありません。</p>';
+        return;
+      }
+      items.forEach((it, i) => {
+        const row = document.createElement('div');
+        row.className = 'item';
+        const main = document.createElement('div');
+        main.className = 'item-main';
+        main.innerHTML = `<span class="item-date">${it.date.replaceAll('-', '.')}</span><span class="item-cat">${it.category}</span><div class="item-title"></div>`;
+        main.querySelector('.item-title').textContent = it.title;
+        const btns = document.createElement('div');
+        btns.className = 'item-btns';
+        const be = document.createElement('button');
+        be.className = 'btn-line'; be.textContent = '修正';
+        be.onclick = () => startEdit(i);
+        const bd = document.createElement('button');
+        bd.className = 'btn-danger'; bd.textContent = '削除';
+        bd.onclick = () => removeItem(i);
+        btns.append(be, bd);
+        row.append(main, btns);
+        list.appendChild(row);
+      });
+    }
+
+    function showMsg(id, ok, text) {
+      const el = $(id);
+      el.className = 'msg ' + (ok ? 'ok' : 'ng');
+      el.textContent = text;
+    }
+
+    function addOrUpdate() {
+      const date = $('fDate').value;
+      const category = $('fCat').value;
+      const title = $('fTitle').value.trim();
+      const url = $('fUrl').value.trim();
+      if (!date)  return showMsg('formMsg', false, '日付を選んでください。');
+      if (!title) return showMsg('formMsg', false, '見出しを入力してください。');
+      const item = { date, category: CAT_OK.includes(category) ? category : 'お知らせ', title, url };
+      if (editIndex >= 0) {
+        items[editIndex] = item;
+        showMsg('formMsg', true, '修正しました。最後に「ホームページに反映する」を押してください。');
+      } else {
+        items.push(item);
+        showMsg('formMsg', true, '追加しました。最後に「ホームページに反映する」を押してください。');
+      }
+      items.sort((a, b) => b.date.localeCompare(a.date));
+      cancelEdit(true);
+      renderList();
+    }
+
+    function startEdit(i) {
+      editIndex = i;
+      const it = items[i];
+      $('fDate').value = it.date;
+      $('fCat').value = it.category;
+      $('fTitle').value = it.title;
+      $('fUrl').value = it.url || '';
+      $('formTitle').textContent = '✏️ お知らせを修正する';
+      $('editingFlag').style.display = 'block';
+      $('btnCancel').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cancelEdit(keepMsg) {
+      editIndex = -1;
+      $('fDate').value = '';
+      $('fTitle').value = '';
+      $('fUrl').value = '';
+      $('formTitle').textContent = '✏️ お知らせを書く';
+      $('editingFlag').style.display = 'none';
+      $('btnCancel').style.display = 'none';
+      if (!keepMsg) $('formMsg').className = 'msg';
+    }
+
+    function removeItem(i) {
+      if (!confirm(`「${items[i].title}」を削除しますか？\n（最後に「ホームページに反映する」を押すまで本番には反映されません）`)) return;
+      items.splice(i, 1);
+      renderList();
+      showMsg('formMsg', true, '削除しました。最後に「ホームページに反映する」を押してください。');
+    }
+
+    function generateFile() {
+      const esc = (s) => String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const lines = items.map((it) =>
+        `  {\n    date: "${esc(it.date)}",\n    category: "${esc(it.category)}",\n    title: "${esc(it.title)}",\n    url: "${esc(it.url || '')}",\n  },`
+      ).join('\n');
+      return `/* ============================================================
+   お知らせデータ
+   ============================================================
+   このファイルは管理ページ（admin.html）から自動生成できます。
+   直接編集する場合の形式:
+   { date: "2026-01-01", category: "祭礼", title: "見出し", url: "" },
+   - category は "祭礼" / "お知らせ" / "メディア"
+   - 日付から30日間は自動で NEW が表示されます
+   ============================================================ */
+
+const NEWS_ITEMS = [
+${lines}
+];
+`;
+    }
+
+    function copyData() {
+      navigator.clipboard.writeText(generateFile())
+        .then(() => showMsg('pubMsg', true, 'コピーしました。続けて「②」のボタンを押してください。'))
+        .catch(() => showMsg('pubMsg', false, 'コピーできませんでした。'));
+    }
+
+    function saveToken() {
+      const t = $('fToken').value.trim();
+      if (!t) return showMsg('pubMsg', false, 'キーを入力してください。');
+      localStorage.setItem('mizukake_token', t);
+      showMsg('pubMsg', true, '保存キーを記憶しました。次回から「ホームページに反映する」だけでOKです。');
+    }
+
+    async function publish() {
+      const token = localStorage.getItem('mizukake_token') || $('fToken').value.trim();
+      if (!token) {
+        showMsg('pubMsg', false, '初回だけ設定が必要です。下の「初回だけ：かんたん設定」を開いて、手順どおりに保存キーを登録してください。');
+        return;
+      }
+      showMsg('pubMsg', true, '反映中です。そのままお待ちください…');
+      try {
+        const headers = {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/vnd.github+json',
+        };
+        const getRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${PATH}`, { headers });
+        if (!getRes.ok) throw new Error('現在のファイルを取得できませんでした（キーが正しいか確認してください）');
+        const { sha } = await getRes.json();
+        const content = btoa(unescape(encodeURIComponent(generateFile())));
+        const putRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${PATH}`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ message: 'お知らせ更新（管理ページから）', content, sha }),
+        });
+        if (!putRes.ok) throw new Error('保存に失敗しました（キーの権限を確認してください）');
+        showMsg('pubMsg', true, '✅ 反映しました！1〜2分後にホームページに表示されます。');
+      } catch (e) {
+        showMsg('pubMsg', false, '❌ ' + e.message + '　うまくいかない場合は「手動で反映する方法」をお試しください。');
+      }
+    }
+
+    renderList();
+  </script>
+</body>
+</html>
