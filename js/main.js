@@ -2,17 +2,19 @@
    西方水かけ祭り 公式HP — main.js
    ============================================================ */
 
-/* ---------- お知らせ描画（データは js/news-data.js） ---------- */
+/* ---------- お知らせ描画（データは js/news-data.js） ----------
+   ブラウザ・CDNのキャッシュ（max-age=600）で古いお知らせが
+   表示されないよう、データは毎回キャッシュ無効で取得する。 */
 (function () {
   const list   = document.getElementById('newsList');
   const toggle = document.getElementById('newsToggle');
-  if (!list || typeof NEWS_ITEMS === 'undefined') return;
+  if (!list) return;
 
   const BADGE_CLASS = { '祭礼': 'badge-event', 'お知らせ': 'badge-info', 'メディア': 'badge-media' };
   const NEW_DAYS    = 30;  // 投稿日からこの日数は NEW を表示
   const SHOW_COUNT  = 5;   // 初期表示件数
 
-  const items = [...NEWS_ITEMS].sort((a, b) => b.date.localeCompare(a.date));
+  let items = [];
   let expanded = false;
 
   const render = () => {
@@ -63,7 +65,17 @@
       render();
     });
   }
-  render();
+
+  const init = (arr) => {
+    items = [...arr].sort((a, b) => b.date.localeCompare(a.date));
+    render();
+  };
+
+  // キャッシュを無効化して常に最新のお知らせを取得（失敗時はscriptタグ読込分にフォールバック）
+  fetch('js/news-data.js?t=' + Date.now(), { cache: 'no-store' })
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then((code) => init(new Function(code + ';\nreturn NEWS_ITEMS;')()))
+    .catch(() => { if (typeof NEWS_ITEMS !== 'undefined') init(NEWS_ITEMS); });
 })();
 
 /* ---------- Navbar: スクロールで背景付与 ---------- */

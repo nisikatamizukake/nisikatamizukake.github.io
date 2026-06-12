@@ -180,12 +180,10 @@
     <p class="note">公式サイト: <a href="index.html">トップページへ戻る</a></p>
   </div>
 
-  <script src="js/news-data.js"></script>
   <script>
     const REPO = 'nisikatamizukake/nisikatamizukake.github.io';
     const PATH = 'js/news-data.js';
-    let items = (typeof NEWS_ITEMS !== 'undefined' ? [...NEWS_ITEMS] : [])
-      .sort((a, b) => b.date.localeCompare(a.date));
+    let items = [];
     let editIndex = -1;
 
     const $ = (id) => document.getElementById(id);
@@ -408,7 +406,22 @@ ${lines}
       }
     }
 
-    renderList();
+    /* ---------- 最新データの読み込み（キャッシュ無効） ----------
+       古いキャッシュを土台に編集して新しい更新を上書きしないよう、
+       一覧は必ずサーバーの最新ファイルから取得する。 */
+    (function loadLatest() {
+      fetch(PATH + '?t=' + Date.now(), { cache: 'no-store' })
+        .then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then((code) => {
+          items = new Function(code + ';\nreturn NEWS_ITEMS;')()
+            .sort((a, b) => b.date.localeCompare(a.date));
+          renderList();
+        })
+        .catch(() => {
+          renderList();
+          showMsg('formMsg', false, 'お知らせの読み込みに失敗しました。ページを再読み込みしてください。');
+        });
+    })();
   </script>
 </body>
 </html>
