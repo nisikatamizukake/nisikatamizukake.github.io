@@ -10,12 +10,6 @@
 
 const NEWS_ITEMS = [
   {
-    date: "2026-01-01",
-    category: "祭礼",
-    title: "【開催報告】2026年 西方水かけ祭り 無事に執り行われました",
-    url: "https://www.instagram.com/nisikata_mizukake/",
-  },
-  {
     date: "2025-12-20",
     category: "お知らせ",
     title: "2026年元日開催のご案内・アクセスについて（駐車場なし）",
@@ -25,12 +19,6 @@ const NEWS_ITEMS = [
     date: "2025-07-15",
     category: "メディア",
     title: "福島民報に西方水かけ祭りが掲載されました",
-    url: "https://www.instagram.com/nisikata_mizukake/",
-  },
-  {
-    date: "2025-01-01",
-    category: "祭礼",
-    title: "【開催報告】2025年 西方水かけ祭り 約500名の来場者が見守るなか開催",
     url: "https://www.instagram.com/nisikata_mizukake/",
   },
 ];
