@@ -10,6 +10,12 @@
 
 const NEWS_ITEMS = [
   {
+    date: "2026-06-13",
+    category: "お知らせ",
+    title: "公式HP運用開始",
+    url: "",
+  },
+  {
     date: "2025-12-20",
     category: "お知らせ",
     title: "2026年元日開催のご案内・アクセスについて（駐車場なし）",
